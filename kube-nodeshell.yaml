@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: kube-nodeshell
+  labels:
+    app: kube-nodeshell
+spec:
+  selector:
+    matchLabels:
+      app: kube-nodeshell
+  template:
+    metadata:
+      labels:
+        app: kube-nodeshell
+    spec:
+      tolerations:
+        - operator: "Exists"
+      containers:
+      - name: kube-nodeshell
+        image: alpine
+        command:
+        - nsenter
+        - --target
+        - "1"
+        - --mount
+        - --uts
+        - --ipc
+        - --net
+        - --pid
+        - --
+        - sleep
+        - infinity
+        securityContext:
+          privileged: true
+      hostIPC: true
+      hostPID: true
+      hostNetwork: true
+      priorityClassName: system-node-critical
