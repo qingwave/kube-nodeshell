@@ -1,47 +1,34 @@
 # Kube-nodeshell
-Access to kubernetes node via nsenter
+Access to kubernetes node via `nsenter`, similar with `kubectl debug` but more powerful
 
 ## Install
 ```bash
 wget https://github.com/qingwave/kube-nodeshell/kube-nodeshell.sh
 chmod +x ./kube-nodeshell.sh
+# [optional] install kubectl plugin, make sure /usr/local/bin in your PATH
+sudo mv ./kube-nodeshell.sh /usr/local/bin/kubectl-nodeshell
 ```
 
 ## Usage
-Access to a sepcial node temporarily, will create a pod and exec into it
+You can use the script `kube-nodeshell.sh` directly, or use kubectl plugin `kubectl nodeshell` 
+
+Access to a special node temporarily, will create a pod and exec into it
 ```bash
-./kube-nodeshell.sh {node_name}
+kubectl nodeshell {node_name}
 ```
 
-Insatll kube-nodeshell daemonset on all node for frequently used
+Install kube-nodeshell daemonset on all node for frequently used
 ```bash
 # install daemonset
-./kube-nodeshell.sh -i
+kubectl nodeshell -i
 
 # access to node
-./kube-nodeshell.sh {node_name}
+kubectl nodeshell {node_name}
 ```
 
 Others:
 ```bash
-./kube-nodeshell.sh -h
-```
-
-## Kubectl Plugin
-Install kubectl plugin
-```bash
-chmod +x ./kube-nodeshell.sh
-# make sure /usr/local/bin in your PATH
-sudo mv ./kube-nodeshell.sh /usr/local/bin/kubectl-nodeshell
-```
-
-Using kubectl plugin
-```bash
-# access to a node
-kubectl nodeshell {node_name}
-
-# install daemonset
-kubectl nodeshell -i
+kubectl nodeshell -h
 ```
 
 ## Links

@@ -17,10 +17,11 @@ function help() {
     echo "Usage:"
     echo "${project_name} {node} [options]"
     echo "  -h, --help: Print help"
-    echo "  -n, --kubeconfig: The namespace scope for this CLI request"
-    echo "  -i --install: If true, install the nodeshell daemonset"
-    echo "  -u --uninstall: If true, uninstall the nodeshell daemonset"
+    echo "  -n, --namespace: The namespace scope for this CLI request"
+    echo "  -i, --install: If true, install the nodeshell daemonset"
+    echo "  -u, --uninstall: If true, uninstall the nodeshell daemonset"
     echo "  -t: If true, create a temporary nodeshell pod and exec"
+    echo "  --context: Context of kubeconfig"
     echo "  --kubeconfig: Path to kubeconfig file"
     exit 0
 }
@@ -35,11 +36,12 @@ function uninstall_ds() {
 }
 
 function exec_temporary_pod() {
-    cmd='[ "nsenter", "--target", "1", "--mount", "--uts", "--ipc", "--net", "--pid", "--"]'
+    cmd='[ "nsenter", "--target", "1", "--mount", "--uts", "--ipc", "--net", "--pid", "--", "bash"]'
     overrides="$(
         cat <<EOT
 {
   "spec": {
+    "enableServiceLinks": false,
     "nodeName": "$node",
     "hostPID": true,
     "hostNetwork": true,
@@ -75,7 +77,7 @@ function exec_daemonset_pod() {
         echo "failed to get pod in node/$node, please check daemonset kube-nodeshell status"
         exit
     fi
-    $kubectl exec -it $pod bash
+    $kubectl exec -it $pod -- bash
 }
 
 while [ $# -gt 0 ]; do
@@ -86,6 +88,11 @@ while [ $# -gt 0 ]; do
         ;;
     --kubeconfig)
         kubectl="$kubectl --kubeconfig $2"
+        shift
+        shift
+        ;;
+    --context)
+        kubectl="$kubectl --context $2"
         shift
         shift
         ;;
@@ -134,6 +141,8 @@ if [[ -z "$node" ]]; then
     echo "node is missing"
     help
 fi
+
+kubectl get no $node > /dev/null
 
 if [ "${temporary}" -eq 0 ]; then
     ds=$($kubectl get ds -l app=kube-nodeshell -ojsonpath='{.items[*].metadata.name}')

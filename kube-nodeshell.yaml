@@ -35,4 +35,5 @@ spec:
       hostIPC: true
       hostPID: true
       hostNetwork: true
+      enableServiceLinks: false
       priorityClassName: system-node-critical
