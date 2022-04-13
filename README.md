@@ -3,7 +3,7 @@ Access to kubernetes node via `nsenter`, similar with `kubectl debug` but more p
 
 ## Install
 ```bash
-wget https://github.com/qingwave/kube-nodeshell/kube-nodeshell.sh
+wget https://raw.githubusercontent.com/qingwave/kube-nodeshell/main/kube-nodeshell.sh
 chmod +x ./kube-nodeshell.sh
 # [optional] install kubectl plugin, make sure /usr/local/bin in your PATH
 sudo mv ./kube-nodeshell.sh /usr/local/bin/kubectl-nodeshell
